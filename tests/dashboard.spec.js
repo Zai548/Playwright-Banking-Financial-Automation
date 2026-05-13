@@ -6,20 +6,21 @@ import { AccountsPage } from "../pages/AccountsPage.page";
 test.describe("Testing the dashboard page", async () => {
   test.beforeEach("Login to the website as admin", async ({ page }) => {
     const login_page = new LoginPage(page);
+    const dashboard_page = new DashboardPage(page);
 
     await login_page.goto();
     await login_page.expectLoginPageLoadSuccessfully();
     await login_page.fillUpFields("admin", "admin123");
     await login_page.login();
+
+    //The user must be in the dashboard page after logging in
+    await dashboard_page.expectDashboardURL();
   });
 
   test("TC-DASH-01: Skeleton loading state appears on page load then data renders", async ({
     page,
   }) => {
     const dashboard_page = new DashboardPage(page);
-
-    //The user must be in the dashboard page after logging in
-    await dashboard_page.expectDashboard();
 
     //Check if the page container is in loading state and the skeleton card are visible
     await dashboard_page.expectSkeletonLoadingState();
@@ -62,7 +63,7 @@ test.describe("Testing the dashboard page", async () => {
     await account_page.dashboardButton.click();
 
     //The user must go back to the dashboard page
-    await dashboard_page.expectDashboard();
+    await dashboard_page.expectDashboardURL();
   });
 
   test("TC-DASH-04: Recent transactions shows up to 5 latest transactions", async ({

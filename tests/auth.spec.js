@@ -22,6 +22,9 @@ test.describe("Testing the login page of a securebank demo from qaplayground", a
     await login_page.login();
 
     //Check if the user goes to the right page of the website (dashboard)
+    await dashboard_page.expectDashboardURL();
+
+    //Check if dashboard page loads successfully
     await dashboard_page.expectDashboardLoadSuccessfully();
   });
 
@@ -67,7 +70,7 @@ test.describe("Testing the login page of a securebank demo from qaplayground", a
     await login_page.expectPasswordToggle();
   });
 
-  test("TC-LOGIN-04: Pressing Enter in the password field submits login fomr", async ({
+  test("TC-LOGIN-04: Pressing Enter in the password field submits login form", async ({
     page,
   }) => {
     const login_page = new LoginPage(page);
@@ -85,7 +88,10 @@ test.describe("Testing the login page of a securebank demo from qaplayground", a
     //CLicks the password field and then click enter
     await login_page.pressEnter();
 
-    //The user must login successful and goes to the dashboard page
+    //Check if the user goes to the right page of the website (dashboard)
+    await dashboard_page.expectDashboardURL();
+
+    //Check if the dashboard page loads successfully
     await dashboard_page.expectDashboardLoadSuccessfully();
   });
 
@@ -107,7 +113,10 @@ test.describe("Testing the login page of a securebank demo from qaplayground", a
     //CLicks the password field and then click enter
     await login_page.login();
 
-    //The user must login successful and goes to the dashboard page
+    //Check if the user goes to the right page of the website (dashboard)
+    await dashboard_page.expectDashboardURL();
+
+    //Check if the dashboard page loads successfully
     await dashboard_page.expectDashboardLoadSuccessfully();
 
     //The user must have read-only badge and role.

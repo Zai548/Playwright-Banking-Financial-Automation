@@ -18,7 +18,6 @@ export class DashboardPage {
     this.draggableAccounts = page.locator(
       '[draggable="true"][data-testid^="draggable-account-"]',
     );
-
     this.pinnedAccountsDropZone = page.getByTestId("drop-zone");
 
     //Texts
@@ -58,11 +57,13 @@ export class DashboardPage {
   }
 
   //Test Actions
-  async;
+  async gotoAccounts() {
+    await this.page.goto("https://qaplayground.com/bank/accounts");
+  }
 
   //Assertions
   //Check if the user is in the right page
-  async expectDashboard() {
+  async expectDashboardURL() {
     await expect(this.page).toHaveURL(
       "https://qaplayground.com/bank/dashboard",
     );
@@ -149,12 +150,11 @@ export class DashboardPage {
     //Get the number of accounts in the dashboard card
     const totalAccount = await this.accounts.allTextContents();
 
-    //Go the the accounts page
-    await this.page.goto("https://qaplayground.com/bank/accounts");
-    await expect(account_page.pageContainer).toHaveAttribute(
-      "data-loading",
-      "false",
-    );
+    //Go to accounts page
+    await this.gotoAccounts();
+
+    //Check if the data renders successfully
+    await account_page.expectAccountsLoadSuccessfully();
 
     //Collect all of the balances in the accounts
     const balance = await account_page.accountsBalance.allTextContents();
