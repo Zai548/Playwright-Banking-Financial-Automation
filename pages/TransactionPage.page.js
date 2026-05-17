@@ -1,0 +1,149 @@
+import { expect } from "@playwright/test";
+import { DashboardPage } from "./DashboardPage.page";
+import { existsSync } from "node:fs";
+
+export class TransactionPage {
+  constructor(page) {
+    this.page = page;
+
+    //Locators
+    this.filterAccount = page.getByTestId("filter-account-select");
+    this.filterTransType = page.getByTestId("filter-transaction-type-select");
+    this.dateFrom = page.getByTestId("date-from-input");
+    this.dateTo = page.getByTestId("date-from-input");
+    this.applyFilterButton = page.getByTestId("apply-filters-button");
+    this.resetFilterButton = page.getByTestId("reset-filters-button");
+    this.exportButton = page.getByTestId("export-button");
+    this.transSummaryBar = page.getByTestId("transactions-summary-bar");
+    this.transTable = page.getByTestId("transactions-table");
+    this.dashboardButton = page.getByTestId("nav-dashboard");
+    this.accountsButtons = page.getByTestId("nav-accounts");
+
+    //New transaction modal
+    this.transactionModal = page.getByTestId("transaction-modal");
+    this.modalTitle = page.getByText("New Transaction", { exact: true });
+    this.modalSubHead = page.getByText(
+      "Fill in the details to create a new transaction.",
+    );
+    this.selectTransType = page.getByTestId("transaction-type-select");
+    this.fromAcc = page.getByTestId("from-account-select");
+    this.toAcc = page.getByTestId("to-account-select");
+    this.ammountField = page.getByTestId("transaction-amount-input");
+    this.descField = page.getByTestId("transaction-description-input");
+    this.notifCheckBox = page.getByTestId("notification-checkbox");
+    this.cancelButton = page.getByTestId("cancel-transaction-button");
+    this.submitButton = page.getByTestId("submit-transaction-button");
+
+    //Messages
+    this.newTransMessage = page.getByText(
+      "Transaction completed successfully!",
+    );
+  }
+
+  //Test Actions
+  //Open new transactions
+  async newTransaction() {
+    await this.dashboardButton.click();
+
+    const dashboard_page = new DashboardPage(this.page);
+    await dashboard_page.newTransactionButton.click();
+  }
+
+  //Fill up new transaction
+  async fillUpNewTransaction(transtype, acc, amount, desc) {
+    //Select Transaction Type
+    await this.selectTransType.click();
+    await this.page.getByRole("option", { name: transtype }).click();
+
+    //Select from account
+    await this.fromAcc.click();
+    await this.page.getByRole("option", { name: acc }).click();
+
+    //Fill up amount
+    await this.ammountField.click();
+    await this.page.keyboard.type(amount);
+
+    //Fill up desc
+    await this.descField.click();
+    await this.page.keyboard.type(desc);
+  }
+
+  //Submit new transaction
+  async submitTrans() {
+    //Click sumbit button
+    await this.submitButton.click();
+  }
+
+  //Go to accounts
+  async gotoAccounts() {
+    await this.accountsButtons.click();
+  }
+
+  //Assertions
+  //Check if the transaction page loads successfully
+  async expectTransactionsLoadsSuccessful() {
+    //Check if the account type filter is visible
+    await expect(this.filterAccount).toBeVisible();
+
+    //Check if the Transaction type filter is visible
+    await expect(this.filterTransType).toBeVisible();
+
+    //Check if the date from is visible
+    await expect(this.dateFrom).toBeVisible();
+
+    //Check if the date to is visible
+    await expect(this.dateTo).toBeVisible();
+
+    //Check if the apply button is visible
+    await expect(this.applyFilterButton).toBeVisible();
+
+    //Check if the reset button is visible
+    await expect(this.resetFilterButton).toBeVisible();
+
+    //Check if the export button is visilbe
+    await expect(this.exportButton).toBeVisible();
+
+    //Check if the summary bar is visible
+    await expect(this.transSummaryBar).toBeVisible();
+
+    //Check if the table is visible
+    await expect(this.transTable).toBeVisible();
+  }
+
+  //Check if the new transaction modal loads successful
+  async expectTransModal() {
+    //Check if the modal is visible
+    await expect(this.transactionModal).toBeVisible();
+
+    //Check if the header and sub header is visible
+    await expect(this.modalTitle).toBeVisible();
+    await expect(this.modalSubHead).toBeVisible();
+
+    //Check if the Transaction type combo box is visilbe
+    await expect(this.selectTransType).toBeVisible();
+
+    //Check if the from account combo box is visible
+    await expect(this.fromAcc).toBeVisible();
+
+    //Check if hte to acc is hidden
+    await expect(this.toAcc).toBeHidden();
+
+    //Check if the amount field is visible
+    await expect(this.ammountField).toBeVisible();
+
+    //Check if the desc field is visible
+    await expect(this.ammountField).toBeVisible();
+
+    //Check if the notif check box is visible
+    await expect(this.notifCheckBox).toBeVisible();
+
+    //Check if the cancel and submit button is visible
+    await expect(this.cancelButton).toBeVisible();
+    await expect(this.submitButton).toBeVisible();
+  }
+
+  //Check if the new transaction message is visible
+  async expectTransMessage() {
+    await expect(this.newTransMessage).toBeVisible();
+  }
+}

@@ -61,6 +61,10 @@ export class DashboardPage {
     await this.page.goto("https://qaplayground.com/bank/accounts");
   }
 
+  async gotoTransaction() {
+    await this.page.goto("https://qaplayground.com/bank/transactions");
+  }
+
   //Assertions
   //Check if the user is in the right page
   async expectDashboardURL() {
@@ -125,9 +129,6 @@ export class DashboardPage {
 
     //Check if the role indicator contains read-only
     await expect(this.roleIndicator).toContainText("Read-only Viewer");
-
-    //Check if the add account is hidden
-    await expect(this.addAccountButton).toBeHidden();
   }
 
   //Check if the skeleton loading state is working

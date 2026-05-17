@@ -14,6 +14,11 @@ export class AccountsPage {
     this.resetFilterButton = page.getByTestId("reset-filters-button");
     this.accountsTable = page.getByTestId("accounts-table");
     this.tableDeleteButton = page.getByLabel("Delete account Checking Account");
+    this.accountDetailBalance = page.getByTestId("account-detail-balance");
+    this.primarySavingsAccount = page
+      .locator('[data-testid^="account-name-"]')
+      .getByText("Primary Savings");
+    this.transactionButton = page.getByTestId("nav-transactions");
 
     //Table columns
     this.accountName = page.getByTestId("account-name");
