@@ -18,6 +18,8 @@ export class TransactionPage {
     this.transTable = page.getByTestId("transactions-table");
     this.dashboardButton = page.getByTestId("nav-dashboard");
     this.accountsButtons = page.getByTestId("nav-accounts");
+    this.totalTransaction = page.getByTestId("transactions-tbody");
+    this.transAccount = page.getByTestId("transaction-account");
 
     //New transaction modal
     this.transactionModal = page.getByTestId("transaction-modal");
@@ -77,6 +79,17 @@ export class TransactionPage {
   //Go to accounts
   async gotoAccounts() {
     await this.accountsButtons.click();
+  }
+
+  //Filter Account
+  async accountFilter(filter) {
+    await this.filterAccount.click();
+    await this.page.getByRole("option", { name: filter }).click();
+    await this.applyFilterButton.click();
+  }
+
+  async resetFilter() {
+    await this.resetFilterButton.click();
   }
 
   //Assertions
@@ -145,5 +158,39 @@ export class TransactionPage {
   //Check if the new transaction message is visible
   async expectTransMessage() {
     await expect(this.newTransMessage).toBeVisible();
+  }
+
+  //Check the transactions total count
+  async expectTransCount(count) {
+    const transCount = await this.totalTransaction.count();
+    await expect(transCount).toEqual(count);
+  }
+
+  //Check the row's Account name
+  async expectAccounts(name) {
+    const accountNames = await this.transAccount.allTextContents();
+
+    expect(accountNames.length).toBeGreaterThan(0);
+
+    for (const accountName of accountNames) {
+      expect(accountName.trim()).toBe(name);
+    }
+  }
+
+  //Check if the summary bar reflects to filtered table
+  async expectSummaryBar(deposit, withdrawals, net, transaction) {
+    const summaryBar = await this.transSummaryBar.allTextContents();
+    const expectedSummaryBar = [
+      "Deposits: $" +
+        deposit +
+        "Withdrawals: $" +
+        withdrawals +
+        "Net: +$" +
+        net +
+        transaction +
+        " transaction",
+    ];
+
+    expect(summaryBar).toStrictEqual(expectedSummaryBar);
   }
 }

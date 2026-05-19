@@ -69,6 +69,29 @@ test.describe("Testing the transaction page", async () => {
 
     const balanceDiff = updatedBalanceNumber - currentBalanceNumber;
 
-    expect(balanceDiff).toBe(500);
+    await expect(balanceDiff).toBe(500);
+  });
+
+  test("TC-TXN-02: Filter transactions by account and verify only matching rows appear", async ({
+    page,
+  }) => {
+    const transaction_page = new TransactionPage(page);
+
+    const transactionCount = await transaction_page.totalTransaction.count();
+
+    await transaction_page.accountFilter("Primary Savings");
+
+    await transaction_page.expectAccounts("Primary Savings");
+
+    await transaction_page.expectSummaryBar(
+      "1,000.00",
+      "0.00",
+      "1,000.00",
+      "1",
+    );
+
+    await transaction_page.resetFilter();
+
+    await transaction_page.expectTransCount(1);
   });
 });
