@@ -94,4 +94,18 @@ test.describe("Testing the transaction page", async () => {
 
     await transaction_page.expectTransCount(1);
   });
+
+  test("TC-TXN-03: Filter transaction by date range using the calendar picker", async ({
+    page,
+  }) => {
+    const transaction_page = new TransactionPage(page);
+
+    await transaction_page.selectDate();
+
+    await transaction_page.expectTableRows();
+
+    await transaction_page.resetFilter();
+
+    await transaction_page.expectReset();
+  });
 });

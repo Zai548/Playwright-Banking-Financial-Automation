@@ -10,7 +10,7 @@ export class TransactionPage {
     this.filterAccount = page.getByTestId("filter-account-select");
     this.filterTransType = page.getByTestId("filter-transaction-type-select");
     this.dateFrom = page.getByTestId("date-from-input");
-    this.dateTo = page.getByTestId("date-from-input");
+    this.dateTo = page.getByTestId("date-to-input");
     this.applyFilterButton = page.getByTestId("apply-filters-button");
     this.resetFilterButton = page.getByTestId("reset-filters-button");
     this.exportButton = page.getByTestId("export-button");
@@ -20,6 +20,12 @@ export class TransactionPage {
     this.accountsButtons = page.getByTestId("nav-accounts");
     this.totalTransaction = page.getByTestId("transactions-tbody");
     this.transAccount = page.getByTestId("transaction-account");
+    this.calendar = page.getByTestId("date-picker-calendar");
+    this.startDate = page.locator('[aria-label="Friday, May 1st, 2026"]');
+    this.endDate = page
+      .locator('[aria-label="Sunday, May 31st, 2026"]')
+      .first();
+    this.dateTimeColumn = page.getByTestId("transaction-date");
 
     //New transaction modal
     this.transactionModal = page.getByTestId("transaction-modal");
@@ -90,6 +96,17 @@ export class TransactionPage {
 
   async resetFilter() {
     await this.resetFilterButton.click();
+  }
+
+  async selectDate() {
+    await this.dateFrom.click();
+    await expect(this.calendar).toBeVisible();
+    await this.startDate.click();
+
+    await this.dateTo.click();
+    await this.endDate.click();
+
+    await this.applyFilterButton.click();
   }
 
   //Assertions
@@ -192,5 +209,28 @@ export class TransactionPage {
     ];
 
     expect(summaryBar).toStrictEqual(expectedSummaryBar);
+  }
+
+  //Check if the table shows only todays date
+  async expectTableRows() {
+    const date = await this.dateTimeColumn.allTextContents();
+    const today = new Date();
+
+    const month = today.toLocaleString("en-US", { month: "long" });
+    const day = String(today.getDate()).padStart(2, "0");
+    const year = today.getFullYear();
+
+    const formattedDate = `${month} ${day}, ${year}`;
+
+    await expect(date[0]).toContain(formattedDate);
+  }
+
+  //check if the reset button works
+  async expectReset() {
+    const startDateText = await this.dateFrom.textContent();
+    const endDateText = await this.dateTo.textContent();
+
+    await expect(startDateText).toContain("Pick start date");
+    await expect(endDateText).toContain("Pick end date");
   }
 }
